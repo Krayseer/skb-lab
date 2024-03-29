@@ -10,7 +10,6 @@ import org.springframework.mail.SimpleMailMessage;
 import org.springframework.mail.javamail.JavaMailSender;
 import ru.krayseer.dto.email.EmailAddress;
 import ru.krayseer.dto.email.EmailContent;
-import ru.krayseer.dto.email.EmailDTO;
 
 /**
  * Тесты для класса {@link SmtpEmailService}
@@ -25,15 +24,11 @@ class SmtpEmailServiceTest {
     private SmtpEmailService emailService;
 
     /**
-     * Тестирование отправки сообщения с данными из {@link EmailDTO}
+     * Тестирование отправки сообщения
      */
     @Test
     void sendMessage() {
-        EmailDTO emailDTO = new EmailDTO(
-                new EmailAddress("address"),
-                new EmailContent<>("subject", "content")
-        );
-        emailService.sendMessage(emailDTO);
+        emailService.sendMessage(new EmailAddress("address"), new EmailContent<>("subject", "content"));
         SimpleMailMessage expectedMailMessage = new SimpleMailMessage();
         expectedMailMessage.setFrom(null);
         expectedMailMessage.setTo("address");

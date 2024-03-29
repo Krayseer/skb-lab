@@ -1,10 +1,8 @@
 package ru.krayseer.accountservice.service;
 
-import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
-import org.springframework.validation.annotation.Validated;
 import ru.krayseer.accountservice.exception.AccountLoginAlreadyExists;
 import ru.krayseer.dto.AccountDTO;
 import ru.krayseer.messaging.MessageQueue;

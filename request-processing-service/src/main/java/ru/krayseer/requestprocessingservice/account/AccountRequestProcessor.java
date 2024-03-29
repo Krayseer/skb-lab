@@ -13,6 +13,9 @@ import ru.krayseer.requestprocessingservice.ProcessResult;
 @Service
 public class AccountRequestProcessor implements RequestProcessor {
 
+    /**
+     * Реализация-заглушка
+     */
     @Override
     public <T> ProcessResult processRequest(T requestData) {
         AccountDTO accountDTO = (AccountDTO) requestData;

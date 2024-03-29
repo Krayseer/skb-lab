@@ -8,7 +8,7 @@ public interface RequestProcessor {
     /**
      * Обработать запрос
      *
-     * @param requestData данные для обработки
+     * @param requestData запрос с данными для обработки
      */
     <T> ProcessResult processRequest(T requestData);
 

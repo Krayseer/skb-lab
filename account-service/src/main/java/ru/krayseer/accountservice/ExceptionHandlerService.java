@@ -12,11 +12,17 @@ import ru.krayseer.dto.ApiError;
 import java.util.HashMap;
 import java.util.Map;
 
+/**
+ * Обработчик ошибок в приложении
+ */
 @Slf4j
 @ControllerAdvice
 @RestControllerAdvice
 public class ExceptionHandlerService {
 
+    /**
+     * Обработать исключение и выдать пользователю информацию об ошибке в формате JSON
+     */
     @ResponseStatus(HttpStatus.BAD_GATEWAY)
     @ExceptionHandler(RuntimeException.class)
     public ApiError<String> handleException(RuntimeException ex) {
@@ -24,6 +30,9 @@ public class ExceptionHandlerService {
         return new ApiError<>(ex.getMessage());
     }
 
+    /**
+     * Обработать исключение валидации и выдать пользователю информацию об ошибке в формате JSON
+     */
     @ResponseStatus(HttpStatus.BAD_REQUEST)
     @ExceptionHandler(MethodArgumentNotValidException.class)
     public ApiError<?> handleValidationException(MethodArgumentNotValidException ex) {

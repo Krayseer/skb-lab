@@ -6,6 +6,9 @@ import org.springframework.stereotype.Component;
 import java.util.Locale;
 import java.util.ResourceBundle;
 
+/**
+ * Сообщения приложения
+ */
 @Component
 public class Messages {
 
@@ -15,10 +18,14 @@ public class Messages {
     private final ResourceBundle resourceBundle;
 
     public Messages() {
-//        Locale appLocale = locale == null ? Locale.getDefault() : Locale.of(locale);
         resourceBundle = ResourceBundle.getBundle("messages", Locale.ENGLISH);
     }
 
+    /**
+     * Получить сообщение по ключу из {@link #resourceBundle}
+     *
+     * @param key ключ сообщения
+     */
     public String getMessageByKey(String key) {
         return resourceBundle.getString(key);
     }

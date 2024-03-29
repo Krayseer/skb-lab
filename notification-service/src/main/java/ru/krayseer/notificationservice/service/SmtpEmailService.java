@@ -8,7 +8,6 @@ import org.springframework.mail.javamail.JavaMailSender;
 import org.springframework.stereotype.Service;
 import ru.krayseer.dto.email.EmailAddress;
 import ru.krayseer.dto.email.EmailContent;
-import ru.krayseer.dto.email.EmailDTO;
 
 /**
  * Реализация сервиса отправки сообщений по протоколу SMTP
@@ -24,10 +23,8 @@ public class SmtpEmailService implements EmailService {
     private String sender;
 
     @Override
-    public void sendMessage(EmailDTO emailDTO) {
-        log.info("Send message: {}", emailDTO);
-        EmailAddress emailAddress = emailDTO.getToAddress();
-        EmailContent<?> emailContent = emailDTO.getContent();
+    public void sendMessage(EmailAddress emailAddress, EmailContent<?> emailContent) {
+        log.info("Send message to <{}> with content: {}", emailAddress, emailContent);
         SimpleMailMessage message = new SimpleMailMessage();
         message.setFrom(sender);
         message.setTo(emailAddress.getAddress());
@@ -35,4 +32,5 @@ public class SmtpEmailService implements EmailService {
         message.setText((String) emailContent.getContent());
         emailSender.send(message);
     }
+
 }

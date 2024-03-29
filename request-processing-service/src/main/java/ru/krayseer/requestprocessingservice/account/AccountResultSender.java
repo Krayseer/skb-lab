@@ -10,24 +10,20 @@ import ru.krayseer.messaging.MessageQueue;
 import ru.krayseer.messaging.MessagingService;
 import ru.krayseer.requestprocessingservice.Messages;
 import ru.krayseer.requestprocessingservice.ProcessResult;
+import ru.krayseer.requestprocessingservice.ResultSender;
 
 /**
  * Отправитель сообщений с результатами обработки заявок на регистрацию аккаунтов
  */
 @Component
 @RequiredArgsConstructor
-public class AccountResultSender {
+public class AccountResultSender implements ResultSender {
 
     private final Messages messages;
 
     private final MessagingService messagingService;
 
-    /**
-     * Отправить сообщение пользователю с информацией о результате обработки запроса
-     *
-     * @param email         адрес, куда нужно отправить сообщение
-     * @param processResult результат обработки запроса
-     */
+    @Override
     public void sendMessage(String email, ProcessResult processResult) {
         String textKey = getMessageKeyByProcessResult(processResult);
         EmailDTO emailDTO  = new EmailDTO(

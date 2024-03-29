@@ -7,7 +7,6 @@ import org.springframework.kafka.annotation.KafkaListener;
 import org.springframework.stereotype.Component;
 import ru.krayseer.dto.AccountDTO;
 import ru.krayseer.messaging.MessageQueue;
-import ru.krayseer.messaging.Message;
 import ru.krayseer.requestprocessingservice.ProcessResult;
 import ru.krayseer.requestprocessingservice.RequestProcessor;
 import ru.krayseer.requestprocessingservice.account.AccountResultSender;

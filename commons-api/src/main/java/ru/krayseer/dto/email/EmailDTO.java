@@ -20,6 +20,6 @@ public class EmailDTO {
     /**
      * Данные, которые нужно отправить в сообщении
      */
-    private EmailContent content;
+    private EmailContent<?> content;
 
 }

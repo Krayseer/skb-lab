@@ -1,5 +1,6 @@
 package ru.krayseer.dto;
 
+import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
@@ -8,16 +9,13 @@ import lombok.NoArgsConstructor;
  */
 @Data
 @NoArgsConstructor
+@AllArgsConstructor
 public class ApiError<T> {
 
     /**
      * Сообщение об ошибке
      */
     private T data;
-
-    public ApiError(T data) {
-        this.data = data;
-    }
 
 }
 

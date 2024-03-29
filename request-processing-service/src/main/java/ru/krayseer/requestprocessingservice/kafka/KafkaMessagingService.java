@@ -8,6 +8,9 @@ import org.springframework.stereotype.Service;
 import ru.krayseer.messaging.Message;
 import ru.krayseer.messaging.MessagingService;
 
+/**
+ * Реализация {@link MessagingService} для Kafka
+ */
 @Service
 @RequiredArgsConstructor
 public class KafkaMessagingService implements MessagingService {

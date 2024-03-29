@@ -23,7 +23,7 @@ public class KafkaProducer {
     @KafkaListener(topics = MessageQueue.EMAIL_SENDER, groupId = "account-group")
     public void receive(String message) {
         EmailDTO emailDTO = objectMapper.readValue(message, EmailDTO.class);
-        emailService.sendMessage(emailDTO);
+        emailService.sendMessage(emailDTO.getToAddress(), emailDTO.getContent());
     }
 
 }
