@@ -30,7 +30,7 @@ export class RegistrationComponent implements OnInit {
 
   onSubmit() {
     const body = JSON.stringify(this.userForm.value);
-    this.http.post('account', body, { headers: {'Content-Type': 'application/json' }});
+    this.http.post('/api/account', body, { headers: { 'Content-Type': 'application/json' }}).subscribe();
   }
 
 }

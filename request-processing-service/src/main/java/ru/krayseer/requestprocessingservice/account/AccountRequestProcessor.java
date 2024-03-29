@@ -20,7 +20,12 @@ public class AccountRequestProcessor implements RequestProcessor {
     public <T> ProcessResult processRequest(T requestData) {
         AccountDTO accountDTO = (AccountDTO) requestData;
         log.info("Start handle process account request: {}", accountDTO);
-        return accountDTO.getId() != null ? ProcessResult.SUCCESS : ProcessResult.INVALID;
+        if (accountDTO.getId() == null) {
+            log.info("Non-success processing account request: {}", accountDTO);
+            return ProcessResult.INVALID;
+        }
+        log.info("Success processing account request: {}", accountDTO);
+        return ProcessResult.SUCCESS;
     }
 
 }
