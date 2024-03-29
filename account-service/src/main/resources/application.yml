@@ -1,0 +1,26 @@
+spring:
+  application:
+    name: account-service
+
+  datasource:
+    url: jdbc:h2:mem:skb-lab
+    driver-class-name: org.h2.Driver
+    username: ${H2_USERNAME}
+    password: ${H2_PASSWORD}
+
+  jpa:
+    hibernate:
+      ddl-auto: update
+
+  h2:
+    console:
+      enabled: true
+
+  kafka:
+    bootstrap-servers: ${KAFKA_HOST}:${KAFKA_PORT}
+    consumer:
+      group-id: account-group
+      auto-offset-reset: earliest
+    template:
+      default-topic: topic
+
