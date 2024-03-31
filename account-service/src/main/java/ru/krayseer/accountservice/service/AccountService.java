@@ -12,6 +12,7 @@ public interface AccountService {
      * Обработать запрос на регистрацию аккаунта
      *
      * @param registerDTO данные об аккаунте, который нужно зарегистрировать
+     *
      * @return данные о зарегистрированном аккаунте
      */
     AccountDTO handleRegisterAccountRequest(RegisterDTO registerDTO);

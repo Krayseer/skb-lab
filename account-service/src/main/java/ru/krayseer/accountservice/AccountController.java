@@ -10,6 +10,9 @@ import ru.krayseer.dto.AccountDTO;
 import ru.krayseer.accountservice.domain.RegisterDTO;
 import ru.krayseer.accountservice.service.AccountService;
 
+/**
+ * REST контроллер обрабатывающий запросы, связанные с аккаунтами
+ */
 @RestController
 @RequiredArgsConstructor
 @RequestMapping("/account")
@@ -17,6 +20,13 @@ public class AccountController {
 
     private final AccountService accountService;
 
+    /**
+     * Запрос на регистрацию аккаунта
+     *
+     * @param registerDTO регистрационные данные об аккаунте
+     *
+     * @return данные о зарегистрированном аккаунте
+     */
     @PostMapping
     public AccountDTO registerAccount(@RequestBody @Valid RegisterDTO registerDTO) {
         return accountService.handleRegisterAccountRequest(registerDTO);

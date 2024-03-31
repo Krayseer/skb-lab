@@ -3,8 +3,8 @@ package ru.krayseer.requestprocessingservice.account;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 import ru.krayseer.dto.AccountDTO;
-import ru.krayseer.requestprocessingservice.ProcessResult;
-import ru.krayseer.requestprocessingservice.RequestProcessor;
+import ru.krayseer.requestprocessingservice.processor.AccountRequestProcessor;
+import ru.krayseer.requestprocessingservice.processor.RequestProcessor;
 
 /**
  * Тесты для класса {@link AccountRequestProcessor}
@@ -19,7 +19,7 @@ class AccountRequestProcessorTest {
     @Test
     void processRequestWithValidData() {
         AccountDTO accountDTO = new AccountDTO(1L, "login", "email", "password");
-        Assertions.assertEquals(ProcessResult.SUCCESS, accountRequestProcessor.processRequest(accountDTO));
+        Assertions.assertEquals(true, accountRequestProcessor.approveRequest(accountDTO));
     }
 
     /**
@@ -28,7 +28,7 @@ class AccountRequestProcessorTest {
     @Test
     void processRequestWithInvalidData() {
         AccountDTO accountDTO = new AccountDTO(null, "login", "email", "password");
-        Assertions.assertEquals(ProcessResult.INVALID, accountRequestProcessor.processRequest(accountDTO));
+        Assertions.assertEquals(false, accountRequestProcessor.approveRequest(accountDTO));
     }
 
 }

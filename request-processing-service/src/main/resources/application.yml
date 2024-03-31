@@ -9,6 +9,3 @@ spring:
       auto-offset-reset: earliest
     template:
       default-topic: topic
-
-app:
-  locale: ${APP_LOCALE}

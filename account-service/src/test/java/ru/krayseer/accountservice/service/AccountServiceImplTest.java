@@ -9,18 +9,20 @@ import org.mockito.Mock;
 import org.mockito.Mockito;
 import org.mockito.junit.jupiter.MockitoExtension;
 import ru.krayseer.accountservice.exception.AccountLoginAlreadyExists;
+import ru.krayseer.accountservice.service.impl.AccountServiceImpl;
 import ru.krayseer.dto.AccountDTO;
-import ru.krayseer.messaging.MessagingService;
+import ru.krayseer.messaging.service.MessagingService;
 import ru.krayseer.accountservice.AccountRepository;
 import ru.krayseer.accountservice.domain.Account;
 import ru.krayseer.accountservice.domain.RegisterDTO;
 import ru.krayseer.accountservice.exception.AccountEmailAlreadyExists;
+import ru.krayseer.messaging.domain.MessageId;
 
 /**
  * Тесты для сервиса обработки аккаунтов {@link AccountService}
  */
 @ExtendWith(MockitoExtension.class)
-class AccountServiceImplTest {
+class  AccountServiceImplTest {
 
     @Mock
     private AccountRepository accountRepository;
@@ -37,14 +39,16 @@ class AccountServiceImplTest {
     @Test
     void saveAccount() {
         RegisterDTO validDTO = new RegisterDTO("login", "password", "email", "name");
+        MessageId messageId = new MessageId("testId");
         Mockito.when(accountRepository.save(Mockito.any())).thenReturn(
                 new Account(1L, validDTO.getLogin(), validDTO.getPassword(), validDTO.getEmail(), validDTO.getName())
         );
+        Mockito.when(messagingService.send(Mockito.any())).thenReturn(messageId);
         AccountDTO actualAccountDTO = accountService.handleRegisterAccountRequest(validDTO);
         AccountDTO expectedAccountDTO = new AccountDTO(1L, "login", "email", "name");
         Assert.assertEquals(expectedAccountDTO, actualAccountDTO);
         Mockito.verify(accountRepository, Mockito.times(1)).save(Mockito.any());
-        Mockito.verify(messagingService, Mockito.times(1)).send(Mockito.any(), Mockito.any());
+        Mockito.verify(messagingService, Mockito.times(1)).send(Mockito.any());
     }
 
     /**
@@ -62,7 +66,7 @@ class AccountServiceImplTest {
         );
         Assert.assertEquals("account with email <email> already exists", emailAlreadyExistsException.getMessage());
         Mockito.verify(accountRepository, Mockito.never()).save(Mockito.any());
-        Mockito.verify(messagingService, Mockito.never()).send(Mockito.any(), Mockito.any());
+        Mockito.verify(messagingService, Mockito.never()).send(Mockito.any());
     }
 
     /**
@@ -80,7 +84,7 @@ class AccountServiceImplTest {
         );
         Assert.assertEquals("account with login <login> already exists", loginAlreadyExistsException.getMessage());
         Mockito.verify(accountRepository, Mockito.never()).save(Mockito.any());
-        Mockito.verify(messagingService, Mockito.never()).send(Mockito.any(), Mockito.any());
+        Mockito.verify(messagingService, Mockito.never()).send(Mockito.any());
     }
 
 }

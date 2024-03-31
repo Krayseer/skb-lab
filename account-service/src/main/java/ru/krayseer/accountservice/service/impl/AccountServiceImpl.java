@@ -1,13 +1,13 @@
-package ru.krayseer.accountservice.service;
+package ru.krayseer.accountservice.service.impl;
 
 import lombok.RequiredArgsConstructor;
+import lombok.SneakyThrows;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 import ru.krayseer.accountservice.exception.AccountLoginAlreadyExists;
+import ru.krayseer.accountservice.service.AccountService;
+import ru.krayseer.accountservice.service.ApprovalRequestService;
 import ru.krayseer.dto.AccountDTO;
-import ru.krayseer.messaging.MessageQueue;
-import ru.krayseer.messaging.Message;
-import ru.krayseer.messaging.MessagingService;
 import ru.krayseer.accountservice.AccountMapper;
 import ru.krayseer.accountservice.domain.Account;
 import ru.krayseer.accountservice.domain.RegisterDTO;
@@ -21,10 +21,11 @@ public class AccountServiceImpl implements AccountService {
 
     private final AccountRepository accountRepository;
 
-    private final MessagingService messagingService;
+    private final ApprovalRequestService approvalRequestService;
 
     @Override
-    public AccountDTO handleRegisterAccountRequest(RegisterDTO registerDTO) {
+    @SneakyThrows
+    public AccountDTO handleRegisterAccountRequest(RegisterDTO registerDTO){
         log.info("Start handle register request: {}", registerDTO);
         if (accountRepository.existsByLogin(registerDTO.getLogin())) {
             throw new AccountLoginAlreadyExists(registerDTO.getLogin());
@@ -33,7 +34,7 @@ public class AccountServiceImpl implements AccountService {
         }
         Account account = accountRepository.save(AccountMapper.createFrom(registerDTO));
         AccountDTO accountDTO = AccountMapper.createTo(account);
-        messagingService.send(MessageQueue.ACCOUNT_PROCESS_REQUEST, new Message<>(accountDTO));
+        approvalRequestService.processRequest(accountDTO);
         return accountDTO;
     }
 

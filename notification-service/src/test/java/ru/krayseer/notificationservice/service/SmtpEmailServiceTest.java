@@ -28,12 +28,17 @@ class SmtpEmailServiceTest {
      */
     @Test
     void sendMessage() {
-        emailService.sendMessage(new EmailAddress("address"), new EmailContent<>("subject", "content"));
+        String address = "test_address";
+        String subject = "test_subject";
+        String content = "test_content";
+
+        emailService.sendMessage(new EmailAddress(address), new EmailContent<>(subject, content));
+
         SimpleMailMessage expectedMailMessage = new SimpleMailMessage();
         expectedMailMessage.setFrom(null);
-        expectedMailMessage.setTo("address");
-        expectedMailMessage.setSubject("subject");
-        expectedMailMessage.setText("content");
+        expectedMailMessage.setTo(address);
+        expectedMailMessage.setSubject(subject);
+        expectedMailMessage.setText(content);
         Mockito.verify(javaMailSender, Mockito.times(1)).send(expectedMailMessage);
     }
 

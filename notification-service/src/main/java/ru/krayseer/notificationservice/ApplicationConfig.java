@@ -8,7 +8,7 @@ import org.springframework.context.annotation.Configuration;
  * Конфигурация приложения
  */
 @Configuration
-public class AppConfig {
+public class ApplicationConfig {
 
     @Bean
     public ObjectMapper objectMapper() {
