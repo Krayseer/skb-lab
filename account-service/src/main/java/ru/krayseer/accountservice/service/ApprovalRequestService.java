@@ -1,9 +1,11 @@
 package ru.krayseer.accountservice.service;
 
+import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
+import ru.krayseer.accountservice.domain.Task;
 import ru.krayseer.dto.AccountDTO;
-import ru.krayseer.dto.ApprovedRequestResultDTO;
+import ru.krayseer.dto.RequestProcessingDTO;
 import ru.krayseer.dto.email.EmailAddress;
 import ru.krayseer.dto.email.EmailContent;
 import ru.krayseer.dto.email.EmailDTO;
@@ -12,7 +14,6 @@ import ru.krayseer.messaging.domain.MessageId;
 import ru.krayseer.messaging.domain.MessageQueue;
 import ru.krayseer.messaging.service.MessagingService;
 
-import java.util.List;
 import java.util.concurrent.*;
 
 /**
@@ -20,24 +21,18 @@ import java.util.concurrent.*;
  */
 @Slf4j
 @Service
+@RequiredArgsConstructor
 public class ApprovalRequestService {
+
+    private final TaskService taskService;
 
     private final ExecutorService executorService;
 
     private final MessagingService messagingService;
 
-    private final List<AccountDTO> cache = new CopyOnWriteArrayList<>();
-
-    public ApprovalRequestService(ExecutorService executorService,
-                                  MessagingService messagingService) {
-        this.executorService = executorService;
-        this.messagingService = messagingService;
-        ScheduledExecutorService scheduler = Executors.newScheduledThreadPool(1);
-        scheduler.scheduleAtFixedRate(this::scheduling, 0, 3, TimeUnit.SECONDS);
-    }
-
     /**
-     * Отправка данных аккаунта на одобрение в сервис одобрения заявок
+     * Отправка данных аккаунта на одобрение в сервис одобрения заявок. Если при ожидании ответа ловится ошибка, то
+     * создаем отдельное {@link Task задание} и отправляем его в {@link TaskService сервис обработки заданий}
      *
      * @param accountDTO данные об аккаунте
      */
@@ -45,16 +40,12 @@ public class ApprovalRequestService {
         Message<AccountDTO> message = new Message<>(MessageQueue.ACCOUNT_PROCESS_REQUEST, accountDTO);
         MessageId messageId = messagingService.send(message);
         executorService.execute(() -> {
-            Message<ApprovedRequestResultDTO> processResult;
+            Message<RequestProcessingDTO> processResult;
             try {
-                processResult = messagingService.receive(messageId, ApprovedRequestResultDTO.class);
-                cache.remove(accountDTO);
-                sendEmailMessageWithApprovalResult(accountDTO.getEmail(), processResult);
+                processResult = messagingService.receive(messageId, RequestProcessingDTO.class);
+                sendEmailWithRegisterResult(accountDTO.getEmail(), processResult.getData());
             } catch (TimeoutException e) {
-                if (cache.contains(accountDTO)) {
-                    return;
-                }
-                cache.add(accountDTO);
+                taskService.addTask(new Task<>(accountDTO, this::processRequest));
             }
         });
     }
@@ -62,18 +53,19 @@ public class ApprovalRequestService {
     /**
      * Отправить сообщение пользователю с результатом проверки
      *
-     * @param message сообщение с результатом проверки
+     * @param requestProcessingDTO результат одобрения заявки
      */
-    private void sendEmailMessageWithApprovalResult(String email, Message<ApprovedRequestResultDTO> message) {
+    private void sendEmailWithRegisterResult(String email, RequestProcessingDTO requestProcessingDTO) {
         EmailDTO emailDTO = new EmailDTO(
                 new EmailAddress(email),
                 new EmailContent<>(
-                        "Approval of application for registration",
-                        getMessageByApprovedAccountResult(message.getData().isApproved())
+                        "Result of approval of the registration application",
+                        getMessageByRequestProcessingResult(requestProcessingDTO.isApproved())
                 )
         );
-        messagingService.send(new Message<>(message.getMessageId(), MessageQueue.EMAIL_SENDER, emailDTO));
-        log.info("process result: {}", message);
+        Message<EmailDTO> requestProcessingResultMessage = new Message<>(MessageQueue.EMAIL_SENDER, emailDTO);
+        messagingService.send(requestProcessingResultMessage);
+        log.info("Send message with registration result: {}", requestProcessingResultMessage);
     }
 
     /**
@@ -81,17 +73,10 @@ public class ApprovalRequestService {
      *
      * @param isAccountApproved одобрена ли заявка
      */
-    private String getMessageByApprovedAccountResult(boolean isAccountApproved) {
+    private String getMessageByRequestProcessingResult(boolean isAccountApproved) {
         return isAccountApproved
                 ? "you success register in service"
                 : "your registration request has not been approved";
-    }
-
-    private void scheduling() {
-        cache.forEach(accountDTO -> {
-            log.info("Re-processing request: {}", accountDTO);
-            processRequest(accountDTO);
-        });
     }
 
 }

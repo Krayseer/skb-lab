@@ -1,4 +1,4 @@
-package ru.krayseer.accountservice;
+package ru.krayseer.accountservice.context;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import org.springframework.context.annotation.Bean;
@@ -22,7 +22,7 @@ public class ApplicationConfig {
 
     @Bean
     public ExecutorService executorService() {
-        return Executors.newScheduledThreadPool(1);
+        return Executors.newScheduledThreadPool(2);
     }
 
 }

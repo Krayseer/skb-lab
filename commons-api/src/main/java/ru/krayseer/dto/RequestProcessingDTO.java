@@ -3,7 +3,6 @@ package ru.krayseer.dto;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
-import ru.krayseer.messaging.domain.MessageId;
 
 /**
  * DTO с результатом обработки запроса
@@ -11,7 +10,7 @@ import ru.krayseer.messaging.domain.MessageId;
 @Data
 @NoArgsConstructor
 @AllArgsConstructor
-public class ApprovedRequestResultDTO {
+public class RequestProcessingDTO {
 
     /**
      * Одобрена ли заявка

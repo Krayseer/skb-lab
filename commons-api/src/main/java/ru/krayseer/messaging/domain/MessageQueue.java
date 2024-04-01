@@ -20,4 +20,9 @@ public final class MessageQueue {
      */
     public static final String EMAIL_SENDER = "email-sender";
 
+    /**
+     * Очередь получения результатов на отправленные заявки
+     */
+    public static final String RECEIVE_RESULT = "receive-result";
+
 }

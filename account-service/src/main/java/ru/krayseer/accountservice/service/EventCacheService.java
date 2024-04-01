@@ -1,6 +1,7 @@
 package ru.krayseer.accountservice.service;
 
 import org.springframework.stereotype.Service;
+import ru.krayseer.messaging.domain.Message;
 import ru.krayseer.messaging.domain.MessageId;
 
 import java.util.Map;
@@ -30,12 +31,12 @@ public class EventCacheService {
     /**
      * Сообщиить о выполнении события
      */
-    public void completeEvent(MessageId messageId, Object data) {
-        CompletableFuture<Object> future = eventByMessageId.get(messageId);
+    public void completeEvent(Message<?> message) {
+        CompletableFuture<Object> future = eventByMessageId.get(message.getMessageId());
         if (future == null) {
             return;
         }
-        future.complete(data);
+        future.complete(message.getData());
     }
 
     /**

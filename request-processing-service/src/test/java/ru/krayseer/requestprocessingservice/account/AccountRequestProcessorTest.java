@@ -19,7 +19,7 @@ class AccountRequestProcessorTest {
     @Test
     void processRequestWithValidData() {
         AccountDTO accountDTO = new AccountDTO(1L, "login", "email", "password");
-        Assertions.assertEquals(true, accountRequestProcessor.approveRequest(accountDTO));
+        Assertions.assertTrue(accountRequestProcessor.approveRequest(accountDTO));
     }
 
     /**
@@ -28,7 +28,7 @@ class AccountRequestProcessorTest {
     @Test
     void processRequestWithInvalidData() {
         AccountDTO accountDTO = new AccountDTO(null, "login", "email", "password");
-        Assertions.assertEquals(false, accountRequestProcessor.approveRequest(accountDTO));
+        Assertions.assertFalse(accountRequestProcessor.approveRequest(accountDTO));
     }
 
 }

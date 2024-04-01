@@ -12,6 +12,9 @@ import ru.krayseer.messaging.domain.Message;
 import ru.krayseer.messaging.domain.MessageQueue;
 import ru.krayseer.notificationservice.service.EmailService;
 
+/**
+ * Слушатель сообщений на отправку писем по email
+ */
 @Slf4j
 @Component
 @RequiredArgsConstructor
@@ -27,7 +30,7 @@ public class EmailMessageListener {
         Message<EmailDTO> emailDTOMessage = objectMapper.readValue(message, new TypeReference<>() {
         });
         EmailDTO emailDTO = emailDTOMessage.getData();
-        emailService.sendMessage(emailDTO.getToAddress(), emailDTO.getContent());
+        emailService.sendMessage(emailDTO.getEmailAddress(), emailDTO.getEmailContent());
     }
 
 }

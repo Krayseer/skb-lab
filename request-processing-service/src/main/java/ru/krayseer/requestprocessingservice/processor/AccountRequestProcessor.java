@@ -18,7 +18,7 @@ public class AccountRequestProcessor implements RequestProcessor {
     public <T> boolean approveRequest(T requestData) {
         AccountDTO accountDTO = (AccountDTO) requestData;
         if (accountDTO.getId() == null) {
-            log.info("Account invalid approved: {}", accountDTO);
+            log.info("Account is not approved: {}", accountDTO);
             return false;
         }
         log.info("Account success approved: {}", accountDTO);

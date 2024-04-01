@@ -15,11 +15,11 @@ public class EmailDTO {
     /**
      * Адрес, куда нужно отправить сообщение
      */
-    private EmailAddress toAddress;
+    private EmailAddress emailAddress;
 
     /**
      * Данные, которые нужно отправить в сообщении
      */
-    private EmailContent<?> content;
+    private EmailContent<?> emailContent;
 
 }

@@ -8,7 +8,7 @@ import org.springframework.kafka.annotation.KafkaListener;
 import org.springframework.kafka.core.KafkaTemplate;
 import org.springframework.stereotype.Service;
 import ru.krayseer.accountservice.service.EventCacheService;
-import ru.krayseer.dto.ApprovedRequestResultDTO;
+import ru.krayseer.dto.RequestProcessingDTO;
 import ru.krayseer.messaging.service.MessagingService;
 import ru.krayseer.messaging.domain.Message;
 import ru.krayseer.messaging.domain.MessageId;
@@ -23,7 +23,15 @@ import java.util.concurrent.*;
 @RequiredArgsConstructor
 public class KafkaMessagingService implements MessagingService {
 
-    private static final Integer DELAY_WAITING_MESSAGE = 3;
+    /**
+     * Время ожидания сообщения в секундах
+     */
+    private static final int DELAY_WAITING_MESSAGE = 3;
+
+    /**
+     * Количество потоков для {@link ExecutorService}
+     */
+    private static final int EXECUTOR_THREAD_COUNT = 2;
 
     private final ObjectMapper objectMapper;
 
@@ -31,7 +39,7 @@ public class KafkaMessagingService implements MessagingService {
 
     private final KafkaTemplate<String, String> kafkaTemplate;
 
-    private final ScheduledExecutorService executorService = Executors.newScheduledThreadPool(1);
+    private final ScheduledExecutorService executorService = Executors.newScheduledThreadPool(EXECUTOR_THREAD_COUNT);
 
     @Override
     @SneakyThrows
@@ -46,7 +54,7 @@ public class KafkaMessagingService implements MessagingService {
         executorService.schedule(eventCacheService.processEvent(messageId), DELAY_WAITING_MESSAGE, TimeUnit.SECONDS);
         try {
             T messageData = messageType.cast(completableFuture.get());
-            return new Message<>(messageId, "received-message", messageData);
+            return new Message<>(messageId, MessageQueue.RECEIVE_RESULT, messageData);
         } catch (InterruptedException e) {
             throw new RuntimeException("threading exception");
         } catch (ExecutionException e) {
@@ -57,9 +65,9 @@ public class KafkaMessagingService implements MessagingService {
     @SneakyThrows
     @KafkaListener(topics = MessageQueue.ACCOUNT_APPROVAL_REQUEST_RESULT, groupId = "account-group")
     public void listen(String receivedMessage) {
-        Message<ApprovedRequestResultDTO> message = objectMapper.readValue(receivedMessage, new TypeReference<>() {
+        Message<RequestProcessingDTO> message = objectMapper.readValue(receivedMessage, new TypeReference<>() {
         });
-        eventCacheService.completeEvent(message.getMessageId(), message.getData());
+        eventCacheService.completeEvent(message);
     }
 
 }
